@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Калькулятор матрасов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .calculator {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .selector-group {
+            margin-bottom: 20px;
+        }
+        .type-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .location-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .type-btn, .location-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background: #ecf0f1;
+            cursor: pointer;
+            border: 1px solid #bdc3c7;
+            min-width: 120px;
+        }
+        .type-btn.active, .location-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        .fabric-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .fabric-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px;
+            text-align: center;
+            background: #ecf0f1;
+            cursor: pointer;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+        }
+        .fabric-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #27ae60;
+        }
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .tab {
+            display: none;
+        }
+        .tab.active {
+            display: block;
+        }
+        .price-highlight {
+            font-size: 24px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .recommended-price {
+            font-size: 24px;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .quick-input {
+            margin-bottom: 15px;
+        }
+        .dimension-hint {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .additional-panel {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .copy-text {
+            margin: 15px 0;
+            padding: 10px;
+            background: #eef;
+            border: 1px dashed #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            white-space: pre-line;
+        }
+        .copy-text:hover {
+            background: #ddf;
+        }
+        .copy-notification {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            color: green;
+            font-size: 12px;
+            display: none;
+        }
+        .add-mattress-btn {
+            background: #3498db !important;
+            margin-top: 20px;
+        }
+        .reset-btn {
+            background: #e74c3c !important;
+        }
+        .mattress-group {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f0f8ff;
+            border-radius: 5px;
+        }
+        .quantity-input {
+            width: 60px !important;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .calculation-steps {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        .cover-price {
+            color: #9b59b6;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Калькулятор матрасов</h1>
+        
+        <div class="selector-group">
+            <h3>Форма матраса:</h3>
+            <div class="type-selector">
+                <div class="type-btn active" data-type="regular">Обычный</div>
+                <div class="type-btn" data-type="trapezoid">Трапеция</div>
+            </div>
+            
+            <h3>Расположение:</h3>
+            <div class="location-selector">
+                <div class="location-btn active" data-location="windowsill">На подоконник</div>
+                <div class="location-btn" data-location="hallway">В прихожую</div>
+            </div>
+        </div>
+
+        <div class="fabric-selector">
+            <div class="fabric-btn active" data-fabric="velur">Велюр Антивандальный</div>
+            <div class="fabric-btn" data-fabric="rog_antivandal">Рогожка Антивандальная</div>
+            <div class="fabric-btn" data-fabric="rog_meshok">Рогожка с эффектом мешковины</div>
+            <div class="fabric-btn" data-fabric="oxford">Оксфорд</div>
+        </div>
+
+        <div class="quick-input">
+            <label for="quick-size">Быстрый ввод размеров:</label>
+            <input type="text" id="quick-size" placeholder="Например: 140x50x8 или 140*150*45*8">
+            <div class="dimension-hint">Введите размеры через x или * (140x50x8 для обычного, 140x150x45x8 для трапеции)</div>
+            <button id="apply-sizes">Применить размеры</button>
+        </div>
+        
+        <div id="regular-tab" class="tab active">
+            <div class="input-group">
+                <label for="length">Длина (см):</label>
+                <input type="number" id="length" value="140">
+            </div>
+            <div class="input-group">
+                <label for="width">Ширина (см):</label>
+                <input type="number" id="width" value="50">
+            </div>
+            <div class="input-group">
+                <label for="height">Высота (см):</label>
+                <input type="number" id="height" value="8">
+            </div>
+        </div>
+        
+        <div id="trapezoid-tab" class="tab">
+            <div class="input-group">
+                <label for="top-length">Длина верха (см):</label>
+                <input type="number" id="top-length" value="140">
+            </div>
+            <div class="input-group">
+                <label for="bottom-length">Длина низа (см):</label>
+                <input type="number" id="bottom-length" value="150">
+            </div>
+            <div class="input-group">
+                <label for="depth">Глубина (см):</label>
+                <input type="number" id="depth" value="45">
+            </div>
+            <div class="input-group">
+                <label for="trap-height">Высота (см):</label>
+                <input type="number" id="trap-height" value="8">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="quantity">Количество матрасов:</label>
+            <input type="number" id="quantity" value="1" min="1" class="quantity-input">
+        </div>
+        
+        <button id="calculate-btn">Рассчитать стоимость</button>
+        <button class="add-mattress-btn" id="add-mattress" style="display: none;">+ Добавить еще матрас</button>
+        <button class="reset-btn" id="reset-calc" style="display: none;">Сбросить все</button>
+        
+        <div class="result" id="result">
+            Введите параметры и нажмите "Рассчитать"
+        </div>
+        
+        <div class="additional-panel" id="additional-panel">
+            <h3>Тексты для копирования:</h3>
+            
+            <div class="copy-text" id="static-text-block">
+                <div id="static-text">☁️Матрас CLOUD 
+🔹Создан из пены с ортопедическим эффектом.
+🔹Чехол из антивандальной ткани полностью съемный и его можно стирать! 
+🔹Матрас не проминается и сохраняет свою форму.</div>
+                <span class="copy-notification">Скопировано!</span>
+            </div>
+            
+            <div class="copy-text" id="dynamic-text-block">
+                <div id="dynamic-text"><!-- Текст будет сгенерирован автоматически --></div>
+                <span class="copy-notification">Скопировано!</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mattresses = [];
+        let selectedFabric = 'velur';
+        let selectedLocation = 'windowsill';
+        const fabricNames = {
+            'velur': 'Велюр Антивандальный',
+            'rog_antivandal': 'Рогожка Антивандальная',
+            'rog_meshok': 'Рогожка с эффектом мешковины',
+            'oxford': 'Оксфорд'
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                    document.getElementById(`${this.dataset.type}-tab`).classList.add('active');
+                });
+            });
+
+            document.querySelectorAll('.location-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.location-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedLocation = this.dataset.location;
+                });
+            });
+
+            document.querySelectorAll('.fabric-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.fabric-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedFabric = this.dataset.fabric;
+                });
+            });
+
+            document.getElementById('apply-sizes').addEventListener('click', parseQuickInput);
+            document.getElementById('calculate-btn').addEventListener('click', calculate);
+            document.getElementById('add-mattress').addEventListener('click', addMattress);
+            document.getElementById('reset-calc').addEventListener('click', resetCalculator);
+            document.getElementById('static-text-block').addEventListener('click', copyToClipboard);
+            document.getElementById('dynamic-text-block').addEventListener('click', copyToClipboard);
+        });
+        
+        function parseQuickInput() {
+            const input = document.getElementById('quick-size').value;
+            const normalizedInput = input.replace(/[*,х×]/g, 'x');
+            const dimensions = normalizedInput.split('x').map(Number).filter(n => !isNaN(n));
+            
+            if (dimensions.length === 3) {
+                document.querySelector('.type-btn[data-type="regular"]').click();
+                document.getElementById('length').value = dimensions[0];
+                document.getElementById('width').value = dimensions[1];
+                document.getElementById('height').value = dimensions[2];
+            } else if (dimensions.length === 4) {
+                document.querySelector('.type-btn[data-type="trapezoid"]').click();
+                document.getElementById('top-length').value = dimensions[0];
+                document.getElementById('bottom-length').value = dimensions[1];
+                document.getElementById('depth').value = dimensions[2];
+                document.getElementById('trap-height').value = dimensions[3];
+            } else {
+                alert('Введите размеры в формате: 140x50x8 (обычный) или 140x150x45x8 (трапеция)\nМожно использовать разделители: x * ×');
+            }
+        }
+        
+        function getRecommendedPrice(price) {
+            const thousands = Math.floor(price / 1000);
+            const remainder = price % 1000;
+
+            if (remainder < 200) {
+                return thousands * 1000 - 10;
+            } 
+            else if (remainder < 700) {
+                return thousands * 1000 + 490;
+            } else {
+                return thousands * 1000 + 990;
+            }
+        }
+        
+        function calculateCoverPrice(length, width, height) {
+            const girth = (2 * width) + (2 * height) + 1;
+            let fabric;
+            
+            if (girth <= 141) {
+                fabric = (length + 2) / 100;
+            } else {
+                fabric = (2 * (length + 2)) / 100;
+            }
+            fabric = Math.ceil(fabric / 0.5) * 0.5;
+
+            let sewingCost;
+            if (length <= 199.9) sewingCost = 500;
+            else if (length <= 299.9) sewingCost = 750;
+            else sewingCost = 1000;
+
+            const cost = (fabric * 300 + sewingCost) * 2;
+            return getRecommendedPrice(cost);
+        }
+        
+        function calculate() {
+            const activeType = document.querySelector('.type-btn.active').dataset.type;
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
+            
+            let length, width, height, topLength, bottomLength, depth, foamCost, fabric, sewingCost;
+            
+            if (activeType === 'regular') {
+                length = parseFloat(document.getElementById('length').value);
+                width = parseFloat(document.getElementById('width').value);
+                height = parseFloat(document.getElementById('height').value);
+                
+                const foamVolume = (length * width * height) / 1000000;
+                foamCost = foamVolume * 25 * 450;
+                
+                const girth = (2 * width) + (2 * height) + 1;
+                if (girth <= 141) {
+                    fabric = (length + 2) / 100;
+                } else {
+                    fabric = (2 * (length + 2)) / 100;
+                }
+                fabric = Math.ceil(fabric / 0.5) * 0.5;
+                
+                if (length <= 199.9) sewingCost = 500;
+                else if (length <= 299.9) sewingCost = 750;
+                else if (length <= 399.9) sewingCost = 1000;
+                else sewingCost = 1250;
+                
+            } else if (activeType === 'trapezoid') {
+                topLength = parseFloat(document.getElementById('top-length').value);
+                bottomLength = parseFloat(document.getElementById('bottom-length').value);
+                depth = parseFloat(document.getElementById('depth').value);
+                height = parseFloat(document.getElementById('trap-height').value);
+                
+                length = Math.max(topLength, bottomLength);
+                
+                const foamVolume = (length * depth * height) / 1000000;
+                foamCost = foamVolume * 25 * 450;
+                
+                const girth = (2 * height) + (2 * depth) + 1;
+                if (girth <= 141) {
+                    fabric = (length + 2) / 100;
+                } else {
+                    fabric = (2 * (length + 2)) / 100;
+                }
+                fabric = Math.ceil(fabric / 0.5) * 0.5;
+                
+                if (length <= 199.9) sewingCost = 500 + 250;
+                else if (length <= 299.9) sewingCost = 750 + 250;
+                else if (length <= 399.9) sewingCost = 1000 + 250;
+                else sewingCost = 1250 + 250;
+            }
+            
+            const realCost = foamCost + sewingCost + (fabric * 300);
+            const totalCost = realCost * 2.5;
+            const recommendedPrice = getRecommendedPrice(totalCost);
+            const coverPrice = calculateCoverPrice(
+                activeType === 'trapezoid' ? Math.max(topLength, bottomLength) : length,
+                width,
+                height
+            );
+            
+            const mattressKey = activeType === 'trapezoid' ? 
+                `${topLength}x${bottomLength}x${depth}x${height}` : 
+                `${length}x${width}x${height}`;
+            
+            mattresses.push({
+                key: mattressKey,
+                type: activeType,
+                location: selectedLocation,
+                length: length,
+                width: width,
+                height: height,
+                topLength: activeType === 'trapezoid' ? topLength : null,
+                bottomLength: activeType === 'trapezoid' ? bottomLength : null,
+                depth: activeType === 'trapezoid' ? depth : null,
+                count: quantity,
+                realCost: Math.round(realCost),
+                totalCost: Math.round(totalCost),
+                recommendedPrice: Math.round(recommendedPrice),
+                coverPrice: Math.round(coverPrice),
+                fabric: selectedFabric
+            });
+            
+            updateResultDisplay();
+            generateTexts();
+        }
+        
+        function updateResultDisplay() {
+            const resultDiv = document.getElementById('result');
+            let html = '<h3>Результаты расчета:</h3>';
+            
+            if (mattresses.length === 0) {
+                html += '<p>Введите параметры и нажмите "Рассчитать"</p>';
+            } else {
+                const groupedMattresses = {};
+                mattresses.forEach(mattress => {
+                    if (!groupedMattresses[mattress.key]) {
+                        groupedMattresses[mattress.key] = {
+                            ...mattress,
+                            totalPrice: mattress.recommendedPrice * mattress.count,
+                            totalRealCost: mattress.realCost * mattress.count,
+                            totalAfterCalculation: mattress.totalCost * mattress.count,
+                            totalCoverPrice: mattress.coverPrice * mattress.count
+                        };
+                    } else {
+                        groupedMattresses[mattress.key].count += mattress.count;
+                        groupedMattresses[mattress.key].totalPrice += mattress.recommendedPrice * mattress.count;
+                        groupedMattresses[mattress.key].totalRealCost += mattress.realCost * mattress.count;
+                        groupedMattresses[mattress.key].totalAfterCalculation += mattress.totalCost * mattress.count;
+                        groupedMattresses[mattress.key].totalCoverPrice += mattress.coverPrice * mattress.count;
+                    }
+                });
+                
+                for (const key in groupedMattresses) {
+                    const mattress = groupedMattresses[key];
+                    let typeName = mattress.type === 'trapezoid' ? 'Трапеция' : 'Обычный';
+                    let locationName = '';
+                    
+                    if (mattress.location === 'windowsill') locationName = ' (на подоконник)';
+                    else if (mattress.location === 'hallway') locationName = ' (в прихожую)';
+                    
+                    html += `
+                        <div class="mattress-group">
+                            <p><strong>Тип матраса:</strong> ${typeName}${locationName}</p>
+                            <p><strong>Ткань:</strong> ${fabricNames[mattress.fabric]}</p>
+                            <p><strong>Параметры:</strong> ${mattress.type === 'trapezoid' ? 
+                                `${mattress.topLength}×${mattress.bottomLength}×${mattress.depth}×${mattress.height} см` : 
+                                `${mattress.length}×${mattress.width}×${mattress.height} см`}</p>
+                            <div class="calculation-steps">
+                                <p><strong>Себестоимость:</strong> ${mattress.totalRealCost} руб</p>
+                                <p><strong>После умножения (×2.5):</strong> ${mattress.totalAfterCalculation} руб</p>
+                                <p><strong>Рекомендуемая цена:</strong> <span class="recommended-price">${mattress.totalPrice} руб</span></p>
+                                <p><strong>Цена чехла:</strong> <span class="cover-price">${mattress.totalCoverPrice} руб</span></p>
+                            </div>
+                            ${mattress.count > 1 ? `<p><strong>Количество:</strong> ${mattress.count} шт.</p>` : ''}
+                        </div>`;
+                }
+                
+                const totalRealCost = mattresses.reduce((sum, m) => sum + (m.realCost * m.count), 0);
+                const totalAfterCalculation = mattresses.reduce((sum, m) => sum + (m.totalCost * m.count), 0);
+                const totalRecommended = mattresses.reduce((sum, m) => sum + (m.recommendedPrice * m.count), 0);
+                const totalCoverPrice = mattresses.reduce((sum, m) => sum + (m.coverPrice * m.count), 0);
+                
+                html += `<div style="margin-top: 15px; font-weight: bold;">
+                    <p>Итого себестоимость: ${totalRealCost} руб</p>
+                    <p>Итого после умножения (×2.5): ${totalAfterCalculation} руб</p>
+                    <p>Итого рекомендуемая цена: <span class="recommended-price">${totalRecommended} руб</span></p>
+                    <p>Итого цена чехлов: <span class="cover-price">${totalCoverPrice} руб</span></p>
+                </div>`;
+            }
+            
+            resultDiv.innerHTML = html;
+            document.getElementById('add-mattress').style.display = 'block';
+            document.getElementById('reset-calc').style.display = 'block';
+            document.getElementById('additional-panel').style.display = 'block';
+        }
+        
+        function generateTexts() {
+            let text = '✍️ЦЕНА: \n';
+            const activeType = document.querySelector('.type-btn.active').dataset.type;
+            const fabricName = fabricNames[selectedFabric];
+            const height = activeType === 'trapezoid' ? 
+                document.getElementById('trap-height').value : 
+                document.getElementById('height').value;
+            
+            const groupedForText = {};
+            mattresses.forEach(mattress => {
+                const key = mattress.type === 'trapezoid' ? 
+                    `${mattress.topLength}*${mattress.bottomLength}*${mattress.depth}*${mattress.height}` :
+                    `${mattress.length}*${mattress.width}*${mattress.height}`;
+                
+                if (!groupedForText[key]) {
+                    groupedForText[key] = {
+                        count: mattress.count,
+                        price: mattress.recommendedPrice,
+                        coverPrice: mattress.coverPrice
+                    };
+                } else {
+                    groupedForText[key].count += mattress.count;
+                }
+            });
+
+            text += `☁️Матрас CLOUD ${height} см в высоту, ${fabricName}:\n\n`;
+
+            for (const key in groupedForText) {
+                const item = groupedForText[key];
+                if (item.count > 1) {
+                    text += `${item.count} матраса ${key}: ${item.price * item.count} руб. (${item.price} × ${item.count})\n`;
+                } else {
+                    text += `Матрас ${key}: ${item.price} руб.\n`;
+                }
+            }
+
+            text += `\n\n\nДополнительное предложение:\n\n`;
+            
+            for (const key in groupedForText) {
+                const item = groupedForText[key];
+                text += `🎨Дополнительный чехол ${key}: ${item.coverPrice} руб.\n`;
+            }
+            text += `\n`;
+            
+            text += `☁️Эффект облака для матраса: 990 руб. (Сумма указана за каждый метр в длину)\n\n`;
+            text += `📌Антискользящее покрытие на выбор: \n`;
+            text += `- Силиконовые накладки: 690 руб.\n`;
+            text += `- Самоклеящаяся лента-липучка: 690 руб.\n`;
+            text += `- Антискользящее полотно: 990 руб. (Сумма указана за каждый метр в длину)\n\n`;
+            text += `🧵Отделочная строчка: 690/1380 руб. (1/2 шва) \n`;
+            text += `*Стоимость указана на матрасы до 2-х метров в длину.\n\n`;
+
+            if (selectedLocation === 'windowsill') {
+                text += `🧶Плед для матраса на подоконник: 2490 руб.\n\n`;
+                text += `🔹Подушка декоративная 40*40: 990 руб. \n`;
+                text += `🔹Подушка классическая 40*40, толщиной 10 см: 1490 руб. \n`;
+                text += `🔹Подушка под ноги: 1990 руб. \n`;
+                text += `🔹Подлокотник: 1990 руб.\n`;
+                text += `🔹Подушка-шар 30 см: 1990 руб\n`;
+                text += `🔹Подушка под спину: 2490 руб. \n`;
+                text += `🔹Валик диаметр 14 см: 1990 руб\n\n`;
+            }
+
+            text += `🙈❗️Декоративная Подушка 35*35 СЮРПРИЗ (Только на момент получения вы узнаете цвет и ткань) - 290 руб.❗️\n\n`;
+            text += `👀Срок изготовления 2-7 дней\n\n`;
+            text += `🤝Гарантия 3 года!`;
+            
+            document.getElementById('dynamic-text').innerHTML = text;
+        }
+        
+        function addMattress() {
+            document.getElementById('quantity').value = 1;
+            document.getElementById('length').focus();
+        }
+        
+        function resetCalculator() {
+            mattresses = [];
+            document.getElementById('length').value = '140';
+            document.getElementById('width').value = '50';
+            document.getElementById('height').value = '8';
+            document.getElementById('quantity').value = 1;
+            document.getElementById('quick-size').value = '';
+            document.getElementById('result').innerHTML = 'Введите параметры и нажмите "Рассчитать"';
+            document.getElementById('additional-panel').style.display = 'none';
+            document.getElementById('add-mattress').style.display = 'none';
+            document.getElementById('reset-calc').style.display = 'none';
+            
+            document.querySelectorAll('.fabric-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.fabric-btn[data-fabric="velur"]').classList.add('active');
+            selectedFabric = 'velur';
+            
+            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.type-btn[data-type="regular"]').classList.add('active');
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('regular-tab').classList.add('active');
+            
+            document.querySelectorAll('.location-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.location-btn[data-location="windowsill"]').classList.add('active');
+            selectedLocation = 'windowsill';
+        }
+        
+        function copyToClipboard(event) {
+            const text = event.currentTarget.querySelector('div').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const notification = event.currentTarget.querySelector('.copy-notification');
+                notification.style.display = 'inline';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
