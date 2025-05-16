@@ -271,16 +271,21 @@
         <div class="additional-panel" id="additional-panel">
             <h3>Тексты для копирования:</h3>
             
-            <div class="copy-text" id="static-text-block">
-                <div id="static-text">☁️Матрас CLOUD 
+            <div class="copy-text" id="description-text-block">
+                <div id="description-text">☁️Матрас CLOUD 
 🔹Создан из пены с ортопедическим эффектом.
 🔹Чехол из антивандальной ткани полностью съемный и его можно стирать! 
 🔹Матрас не проминается и сохраняет свою форму.</div>
                 <span class="copy-notification">Скопировано!</span>
             </div>
             
-            <div class="copy-text" id="dynamic-text-block">
-                <div id="dynamic-text"><!-- Текст будет сгенерирован автоматически --></div>
+            <div class="copy-text" id="price-text-block">
+                <div id="price-text"><!-- Текст будет сгенерирован автоматически --></div>
+                <span class="copy-notification">Скопировано!</span>
+            </div>
+            
+            <div class="copy-text" id="additional-offers-block">
+                <div id="additional-offers"><!-- Текст будет сгенерирован автоматически --></div>
                 <span class="copy-notification">Скопировано!</span>
             </div>
         </div>
@@ -328,8 +333,9 @@
             document.getElementById('calculate-btn').addEventListener('click', calculate);
             document.getElementById('add-mattress').addEventListener('click', addMattress);
             document.getElementById('reset-calc').addEventListener('click', resetCalculator);
-            document.getElementById('static-text-block').addEventListener('click', copyToClipboard);
-            document.getElementById('dynamic-text-block').addEventListener('click', copyToClipboard);
+            document.getElementById('description-text-block').addEventListener('click', copyToClipboard);
+            document.getElementById('price-text-block').addEventListener('click', copyToClipboard);
+            document.getElementById('additional-offers-block').addEventListener('click', copyToClipboard);
         });
         
         function parseQuickInput() {
@@ -545,7 +551,8 @@
         }
         
         function generateTexts() {
-            let text = '✍️ЦЕНА: \n';
+            // Генерация текста с ценами
+            let priceText = '✍️ЦЕНА:\n';
             const activeType = document.querySelector('.type-btn.active').dataset.type;
             const fabricName = fabricNames[selectedFabric];
             const height = activeType === 'trapezoid' ? 
@@ -569,49 +576,51 @@
                 }
             });
 
-            text += `☁️Матрас CLOUD ${height} см в высоту, ${fabricName}:\n\n`;
+            priceText += `☁️Матрас CLOUD ${height} см в высоту, ${fabricName}:\n\n`;
 
             for (const key in groupedForText) {
                 const item = groupedForText[key];
                 if (item.count > 1) {
-                    text += `${item.count} матраса ${key}: ${item.price * item.count} руб. (${item.price} × ${item.count})\n`;
+                    priceText += `${item.count} матраса ${key}: ${item.price * item.count} руб. (${item.price} × ${item.count})\n`;
                 } else {
-                    text += `Матрас ${key}: ${item.price} руб.\n`;
+                    priceText += `Матрас ${key}: ${item.price} руб.\n`;
                 }
             }
+            
+            document.getElementById('price-text').innerHTML = priceText;
 
-            text += `\n\n\nДополнительное предложение:\n\n`;
+            // Генерация текста дополнительных предложений
+            let offersText = `Дополнительное предложение:\n\n`;
             
             for (const key in groupedForText) {
                 const item = groupedForText[key];
-                text += `🎨Дополнительный чехол ${key}: ${item.coverPrice} руб.\n`;
+                offersText += `🎨Дополнительный чехол, цвет на выбор ${key}: ${item.coverPrice} руб.\n`;
             }
-            text += `\n`;
             
-            text += `☁️Эффект облака для матраса: 990 руб. (Сумма указана за каждый метр в длину)\n\n`;
-            text += `📌Антискользящее покрытие на выбор: \n`;
-            text += `- Силиконовые накладки: 690 руб.\n`;
-            text += `- Самоклеящаяся лента-липучка: 690 руб.\n`;
-            text += `- Антискользящее полотно: 990 руб. (Сумма указана за каждый метр в длину)\n\n`;
-            text += `🧵Отделочная строчка: 690/1380 руб. (1/2 шва) \n`;
-            text += `*Стоимость указана на матрасы до 2-х метров в длину.\n\n`;
+            offersText += `\n☁️Эффект облака для матраса: 990 руб. (Сумма указана за каждый метр в длиту)\n\n`;
+            offersText += `📌Антискользящее покрытие на выбор:\n`;
+            offersText += `- Силиконовые накладки: 690 руб.\n`;
+            offersText += `- Самоклеящаяся лента-липучка: 690 руб.\n`;
+            offersText += `- Антискользящее полотно: 990 руб. (Сумма указана за каждый метр в длиту)\n\n`;
+            offersText += `🧵Отделочная строчка: 690/1380 руб. (1/2 шва)\n`;
+            offersText += `*Стоимость указана на матрасы до 2-х метров в длину.\n\n`;
 
             if (selectedLocation === 'windowsill') {
-                text += `🧶Плед для матраса на подоконник: 2490 руб.\n\n`;
-                text += `🔹Подушка декоративная 40*40: 990 руб. \n`;
-                text += `🔹Подушка классическая 40*40, толщиной 10 см: 1490 руб. \n`;
-                text += `🔹Подушка под ноги: 1990 руб. \n`;
-                text += `🔹Подлокотник: 1990 руб.\n`;
-                text += `🔹Подушка-шар 30 см: 1990 руб\n`;
-                text += `🔹Подушка под спину: 2490 руб. \n`;
-                text += `🔹Валик диаметр 14 см: 1990 руб\n\n`;
+                offersText += `🧶Плед для матраса на подоконник: 2490 руб.\n\n`;
+                offersText += `🔹Подушка декоративная 40*40: 990 руб.\n`;
+                offersText += `🔹Подушка классическая 40*40, толщиной 10 см: 1490 руб.\n`;
+                offersText += `🔹Подушка под ноги: 1990 руб.\n`;
+                offersText += `🔹Подлокотник: 1990 руб.\n`;
+                offersText += `🔹Подушка-шар 30 см: 1990 руб\n`;
+                offersText += `🔹Подушка под спину: 2490 руб.\n`;
+                offersText += `🔹Валик диаметр 14 см: 1990 руб\n\n`;
             }
 
-            text += `🙈❗️Декоративная Подушка 35*35 СЮРПРИЗ (Только на момент получения вы узнаете цвет и ткань) - 290 руб.❗️\n\n`;
-            text += `👀Срок изготовления 2-7 дней\n\n`;
-            text += `🤝Гарантия 3 года!`;
+            offersText += `🙈❗️Декоративная Подушка 35*35 СЮРПРИЗ (Только на момент получения вы узнаете цвет и ткань) - 290 руб.❗️\n\n`;
+            offersText += `👀Срок изготовления 2-7 дней\n\n`;
+            offersText += `🤝Гарантия 3 года!`;
             
-            document.getElementById('dynamic-text').innerHTML = text;
+            document.getElementById('additional-offers').innerHTML = offersText;
         }
         
         function addMattress() {
