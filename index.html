@@ -183,10 +183,6 @@
             font-size: 14px;
             color: #555;
         }
-        .cover-price {
-            color: #9b59b6;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -373,26 +369,6 @@
             }
         }
         
-        function calculateCoverPrice(length, width, height) {
-            const girth = (2 * width) + (2 * height) + 1;
-            let fabric;
-            
-            if (girth <= 141) {
-                fabric = (length + 2) / 100;
-            } else {
-                fabric = (2 * (length + 2)) / 100;
-            }
-            fabric = Math.ceil(fabric / 0.5) * 0.5;
-
-            let sewingCost;
-            if (length <= 199.9) sewingCost = 500;
-            else if (length <= 299.9) sewingCost = 750;
-            else sewingCost = 1000;
-
-            const cost = (fabric * 300 + sewingCost) * 2;
-            return getRecommendedPrice(cost);
-        }
-        
         function calculate() {
             const activeType = document.querySelector('.type-btn.active').dataset.type;
             const quantity = parseInt(document.getElementById('quantity').value) || 1;
@@ -448,11 +424,6 @@
             const realCost = foamCost + sewingCost + (fabric * 300);
             const totalCost = realCost * 2.5;
             const recommendedPrice = getRecommendedPrice(totalCost);
-            const coverPrice = calculateCoverPrice(
-                activeType === 'trapezoid' ? Math.max(topLength, bottomLength) : length,
-                width,
-                height
-            );
             
             const mattressKey = activeType === 'trapezoid' ? 
                 `${topLength}x${bottomLength}x${depth}x${height}` : 
@@ -472,7 +443,6 @@
                 realCost: Math.round(realCost),
                 totalCost: Math.round(totalCost),
                 recommendedPrice: Math.round(recommendedPrice),
-                coverPrice: Math.round(coverPrice),
                 fabric: selectedFabric
             });
             
@@ -494,15 +464,13 @@
                             ...mattress,
                             totalPrice: mattress.recommendedPrice * mattress.count,
                             totalRealCost: mattress.realCost * mattress.count,
-                            totalAfterCalculation: mattress.totalCost * mattress.count,
-                            totalCoverPrice: mattress.coverPrice * mattress.count
+                            totalAfterCalculation: mattress.totalCost * mattress.count
                         };
                     } else {
                         groupedMattresses[mattress.key].count += mattress.count;
                         groupedMattresses[mattress.key].totalPrice += mattress.recommendedPrice * mattress.count;
                         groupedMattresses[mattress.key].totalRealCost += mattress.realCost * mattress.count;
                         groupedMattresses[mattress.key].totalAfterCalculation += mattress.totalCost * mattress.count;
-                        groupedMattresses[mattress.key].totalCoverPrice += mattress.coverPrice * mattress.count;
                     }
                 });
                 
@@ -525,7 +493,6 @@
                                 <p><strong>Себестоимость:</strong> ${mattress.totalRealCost} руб</p>
                                 <p><strong>После умножения (×2.5):</strong> ${mattress.totalAfterCalculation} руб</p>
                                 <p><strong>Рекомендуемая цена:</strong> <span class="recommended-price">${mattress.totalPrice} руб</span></p>
-                                <p><strong>Цена чехла:</strong> <span class="cover-price">${mattress.totalCoverPrice} руб</span></p>
                             </div>
                             ${mattress.count > 1 ? `<p><strong>Количество:</strong> ${mattress.count} шт.</p>` : ''}
                         </div>`;
@@ -534,13 +501,11 @@
                 const totalRealCost = mattresses.reduce((sum, m) => sum + (m.realCost * m.count), 0);
                 const totalAfterCalculation = mattresses.reduce((sum, m) => sum + (m.totalCost * m.count), 0);
                 const totalRecommended = mattresses.reduce((sum, m) => sum + (m.recommendedPrice * m.count), 0);
-                const totalCoverPrice = mattresses.reduce((sum, m) => sum + (m.coverPrice * m.count), 0);
                 
                 html += `<div style="margin-top: 15px; font-weight: bold;">
                     <p>Итого себестоимость: ${totalRealCost} руб</p>
                     <p>Итого после умножения (×2.5): ${totalAfterCalculation} руб</p>
                     <p>Итого рекомендуемая цена: <span class="recommended-price">${totalRecommended} руб</span></p>
-                    <p>Итого цена чехлов: <span class="cover-price">${totalCoverPrice} руб</span></p>
                 </div>`;
             }
             
@@ -568,8 +533,7 @@
                 if (!groupedForText[key]) {
                     groupedForText[key] = {
                         count: mattress.count,
-                        price: mattress.recommendedPrice,
-                        coverPrice: mattress.coverPrice
+                        price: mattress.recommendedPrice
                     };
                 } else {
                     groupedForText[key].count += mattress.count;
@@ -592,24 +556,18 @@
             // Генерация текста дополнительных предложений
             let offersText = `Дополнительное предложение:\n\n`;
             
-            for (const key in groupedForText) {
-                const item = groupedForText[key];
-                offersText += `🎨Дополнительный второй сменный чехол, цвет на выбор ${key}: ${item.coverPrice} руб.\n`;
-            }
-            
-            offersText += `\n☁️Эффект облака для матраса: 990 руб. (Сумма указана за каждый метр в длину)\n\n`;
+            offersText += `☁️Эффект облака для матраса: 990 руб. (Сумма указана за каждый метр в длину)\n\n`;
             offersText += `📌Антискользящее покрытие на выбор:\n`;
             offersText += `- Силиконовые накладки: 690 руб.\n`;
             offersText += `- Самоклеящаяся лента-липучка: 690 руб.\n`;
             offersText += `- Антискользящее полотно: 990 руб. (Сумма указана за каждый метр в длину)\n\n`;
 
+            // Добавляем подушки только для матрасов на подоконник
             if (selectedLocation === 'windowsill') {
-                offersText += `🧶Плед для матраса (150*200): 1990 руб.\n\n`;
                 offersText += `🔹Подушка декоративная 40*40: 990 руб.\n`;
                 offersText += `🔹Подушка классическая 40*40, толщиной 10 см: 1490 руб.\n`;
                 offersText += `🔹Подушка под ноги: 1990 руб.\n`;
                 offersText += `🔹Подлокотник: 1990 руб.\n`;
-                offersText += `🔹Подушка-шар 30 см: 1990 руб\n`;
                 offersText += `🔹Подушка под спину: 2490 руб.\n`;
                 offersText += `🔹Валик диаметр 14 см: 1990 руб\n\n`;
             }
