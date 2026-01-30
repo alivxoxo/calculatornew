@@ -422,7 +422,7 @@
             }
             
             const realCost = foamCost + sewingCost + (fabric * 300);
-            const totalCost = realCost * 2.5;
+            const totalCost = realCost * 2;
             const recommendedPrice = getRecommendedPrice(totalCost);
             
             const mattressKey = activeType === 'trapezoid' ? 
@@ -491,7 +491,7 @@
                                 `${mattress.length}×${mattress.width}×${mattress.height} см`}</p>
                             <div class="calculation-steps">
                                 <p><strong>Себестоимость:</strong> ${mattress.totalRealCost} руб</p>
-                                <p><strong>После умножения (×2.5):</strong> ${mattress.totalAfterCalculation} руб</p>
+                                <p><strong>После умножения (×2):</strong> ${mattress.totalAfterCalculation} руб</p>
                                 <p><strong>Рекомендуемая цена:</strong> <span class="recommended-price">${mattress.totalPrice} руб</span></p>
                             </div>
                             ${mattress.count > 1 ? `<p><strong>Количество:</strong> ${mattress.count} шт.</p>` : ''}
@@ -504,7 +504,7 @@
                 
                 html += `<div style="margin-top: 15px; font-weight: bold;">
                     <p>Итого себестоимость: ${totalRealCost} руб</p>
-                    <p>Итого после умножения (×2.5): ${totalAfterCalculation} руб</p>
+                    <p>Итого после умножения (×2): ${totalAfterCalculation} руб</p>
                     <p>Итого рекомендуемая цена: <span class="recommended-price">${totalRecommended} руб</span></p>
                 </div>`;
             }
